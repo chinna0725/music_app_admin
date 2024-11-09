@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class LandingPageProvider extends ChangeNotifier {
   bool isExpanded = true;
 
-  int selectedTitleIndex = 1;
+  int selectedTitleIndex = 0;
   bool get getIsExpanded => isExpanded;
 
   set setIsExpanded(bool isExpanded) {

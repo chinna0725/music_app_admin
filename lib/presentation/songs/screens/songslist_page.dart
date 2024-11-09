@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:music_app_admin/models/playlist_model.dart';
-import 'package:music_app_admin/presentation/playlist_page/widgets/add_playlist_widget.dart';
+import 'package:music_app_admin/presentation/songs/widgets/add_song_widget.dart';
 import 'package:music_app_admin/provider/playlist_page_provider.dart';
+import 'package:music_app_admin/provider/songslist_page_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/song_model.dart';
 import '../../../utils/app_pallate.dart';
 import '../../../utils/decoration_utils.dart';
 import '../../../utils/screen_utils.dart';
 
-class Playlistpage extends StatefulWidget {
-  const Playlistpage({super.key});
+class SongslistPage extends StatefulWidget {
+  const SongslistPage({super.key});
 
   @override
-  State<Playlistpage> createState() => _PlaylistpageState();
+  State<SongslistPage> createState() => _SongslistPageState();
 }
 
-class _PlaylistpageState extends State<Playlistpage> {
+class _SongslistPageState extends State<SongslistPage> {
   TextEditingController searchContrller = TextEditingController();
   bool onSearch = false;
+  // PlaylistModel? selectedModel;
 
   @override
   void initState() {
-    context.read<PlaylistPageProvider>().getUsersLIst();
+    // selectedModel = context.read<PlaylistPageProvider>().playlistList.first;
+
+    context.read<SongslistPageProvider>().getUsersLIst();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    return context.watch<PlaylistPageProvider>().getAddUserSelected
-        ? const AddPlaylistWidget()
+    return context.watch<SongslistPageProvider>().getAddUserSelected
+        ? const AddSongWidget()
         : SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,7 +44,7 @@ class _PlaylistpageState extends State<Playlistpage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      "Manage Playlists",
+                      "Manage Songs",
                       style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.w800,
@@ -57,43 +62,17 @@ class _PlaylistpageState extends State<Playlistpage> {
                           )),
                       onPressed: () {
                         context
-                            .read<PlaylistPageProvider>()
+                            .read<SongslistPageProvider>()
                             .setAddUserSelected = true;
+                        context.read<SongslistPageProvider>().setIsNew = true;
                       },
                       child: const Text(
-                        "Add Playlist",
+                        "Add Songs",
                         style: TextStyle(color: Colors.black),
                       ),
                     )
                   ],
                 ),
-
-                // GridView.count(
-                //   physics: const NeverScrollableScrollPhysics(),
-                //   shrinkWrap: true,
-                //   crossAxisCount: ScreenUtils.isMobileView(context)
-                //       ? 1
-                //       : ScreenUtils.isTabletView(context)
-                //           ? 2
-                //           : 2,
-                //   crossAxisSpacing: size.width * 0.020,
-                //   mainAxisSpacing: size.width * 0.020,
-                //   childAspectRatio: ScreenUtils.isMobileView(context)
-                //       ? 3.1
-                //       : ScreenUtils.isTabletView(context)
-                //           ? 2.5
-                //           : 3.5,
-                //   children: [
-                //     Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: getGridWidget("Playlists", Icons.album_outlined, 25,
-                //             const Color.fromARGB(255, 65, 55, 211), context)),
-                //     Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: getGridWidget("Songs", Icons.album_outlined, 25,
-                //             const Color.fromARGB(255, 65, 55, 211), context)),
-                //   ],
-                // ),
 
                 const SizedBox(
                   height: 20,
@@ -132,6 +111,7 @@ class _PlaylistpageState extends State<Playlistpage> {
                 ),
 
                 //  userlist container
+
                 Container(
                   width: size.width,
                   padding: const EdgeInsets.all(15),
@@ -143,22 +123,87 @@ class _PlaylistpageState extends State<Playlistpage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Playlist",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: AppPallate.darkBlue),
-                      ),
                       const SizedBox(
                         height: 20,
                       ),
-                      Consumer<PlaylistPageProvider>(
+                      if (context
+                          .watch<PlaylistPageProvider>()
+                          .playlistList
+                          .isNotEmpty)
+                        Row(
+                          children: [
+                            const Text(
+                              "Select Playlist",
+                              style: TextStyle(
+                                  fontSize: 12, color: Colors.black38),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Theme(
+                              data: Theme.of(context).copyWith(
+                                  hoverColor: Colors.transparent,
+                                  canvasColor: AppPallate.whiteColor),
+                              child: Padding(
+                                padding: const EdgeInsets.all(0),
+                                child: FittedBox(
+                                  child: DropdownButtonFormField<PlaylistModel>(
+                                    value: context
+                                        .watch<PlaylistPageProvider>()
+                                        .playlistList
+                                        .first,
+                                    isExpanded: true,
+                                    decoration: InputDecoration(
+                                        fillColor:
+                                            AppPallate.scaffoldBackroundColor,
+                                        filled: true,
+                                        focusColor: Colors.amberAccent,
+                                        constraints: BoxConstraints(
+                                          maxHeight: 40,
+                                          maxWidth: ScreenUtils.isMobileView(
+                                                      context) ||
+                                                  ScreenUtils.isTabletView(
+                                                      context)
+                                              ? size.width * 0.5
+                                              : size.width * 0.3,
+                                        ),
+                                        enabledBorder: const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.black12,
+                                                width: 0.5)),
+                                        border: const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.black12,
+                                                width: 0.5)),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 0)),
+                                    style: const TextStyle(color: Colors.black),
+                                    items: context
+                                        .watch<PlaylistPageProvider>()
+                                        .playlistList
+                                        .map((PlaylistModel value) {
+                                      return DropdownMenuItem<PlaylistModel>(
+                                        value: value,
+                                        child: Text(value.name),
+                                      );
+                                    }).toList(),
+                                    onChanged: (_) {},
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Consumer<SongslistPageProvider>(
                         builder: (context, provider, child) {
                           return provider.selectedList.isEmpty
                               ? SizedBox(
                                   height: 100,
-                                  width: size.width,
+                                  width: size.width * 8,
                                   child: const Center(
                                     child: Text(
                                       "No Playlist",
@@ -178,7 +223,7 @@ class _PlaylistpageState extends State<Playlistpage> {
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Consumer<PlaylistPageProvider>(
+                  child: Consumer<SongslistPageProvider>(
                     builder: (context, value, child) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -192,58 +237,51 @@ class _PlaylistpageState extends State<Playlistpage> {
           );
   }
 
-  Widget getDatatableWidget(PlaylistPageProvider provider, Size size) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      scrollDirection: Axis.horizontal,
-      child: SizedBox(
-        width: size.width * 0.95,
-        child: DataTable(
-            horizontalMargin: 1,
-            dataRowHeight: 100,
-            columns: const [
-              // DataColumn(
-              //   headingRowAlignment: MainAxisAlignment.center,
-              //   label: Text(
-              //     "Image",
-              //     style: TextStyle(
-              //         fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
-              //   ),
-              // ),
-              DataColumn(
-                headingRowAlignment: MainAxisAlignment.center,
-                label: Text(
-                  "Image",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      color: AppPallate.darkBlue),
-                ),
+  Widget getDatatableWidget(SongslistPageProvider provider, Size size) {
+    return SizedBox(
+      width: size.width * 0.8,
+      child: DataTable(
+          horizontalMargin: 1,
+          dataRowHeight: 100,
+          columns: const [
+            // DataColumn(
+            //   headingRowAlignment: MainAxisAlignment.center,
+            //   label: Text(
+            //     "Image",
+            //     style: TextStyle(
+            //         fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
+            //   ),
+            // ),
+            DataColumn(
+              headingRowAlignment: MainAxisAlignment.center,
+              label: Text(
+                "Image",
+                style: TextStyle(
+                    fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
               ),
-              DataColumn(
-                headingRowAlignment: MainAxisAlignment.center,
-                label: Text(
-                  "Name",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      color: AppPallate.darkBlue),
-                ),
+            ),
+            DataColumn(
+              headingRowAlignment: MainAxisAlignment.center,
+              label: Text(
+                "Name",
+                style: TextStyle(
+                    fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
               ),
-              DataColumn(
-                headingRowAlignment: MainAxisAlignment.center,
-                label: Text(
-                  "Action",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      color: AppPallate.darkBlue),
-                ),
+            ),
+            DataColumn(
+              headingRowAlignment: MainAxisAlignment.center,
+              label: Text(
+                "Action",
+                style: TextStyle(
+                    fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
               ),
-            ],
-            rows: provider.selectedList.map(
-              (e) {
-                return gettableRow(e);
-              },
-            ).toList()),
-      ),
+            ),
+          ],
+          rows: provider.selectedList.map(
+            (e) {
+              return gettableRow(e);
+            },
+          ).toList()),
     );
   }
 
@@ -254,9 +292,9 @@ class _PlaylistpageState extends State<Playlistpage> {
       });
 
       print("in");
-      context.read<PlaylistPageProvider>().selectedList.clear();
-      List<PlaylistModel> ul = [];
-      context.read<PlaylistPageProvider>().playlistList.forEach(
+      context.read<SongslistPageProvider>().selectedList.clear();
+      List<SongModel> ul = [];
+      context.read<SongslistPageProvider>().songlistList.forEach(
         (e) {
           if (e.name.contains(value)) {
             ul.add(e);
@@ -264,15 +302,15 @@ class _PlaylistpageState extends State<Playlistpage> {
         },
       );
 
-      context.read<PlaylistPageProvider>().setSelectedList = ul;
+      context.read<SongslistPageProvider>().setSelectedList = ul;
     } else {
       setState(() {
         onSearch = false;
       });
       print("out");
       context
-          .read<PlaylistPageProvider>()
-          .getselectedList(context.read<PlaylistPageProvider>().selectedPage);
+          .read<SongslistPageProvider>()
+          .getselectedList(context.read<SongslistPageProvider>().selectedPage);
     }
   }
 
@@ -283,9 +321,9 @@ class _PlaylistpageState extends State<Playlistpage> {
       for (int i = 1; i <= value; i++) {
         widgets.add(InkWell(
           onTap: () {
-            context.read<PlaylistPageProvider>().selectedPage = i;
+            context.read<SongslistPageProvider>().selectedPage = i;
 
-            context.read<PlaylistPageProvider>().getselectedList(i);
+            context.read<SongslistPageProvider>().getselectedList(i);
           },
           child: Container(
             height: 40,
@@ -293,7 +331,7 @@ class _PlaylistpageState extends State<Playlistpage> {
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
                 border: Border.all(color: AppPallate.scaffoldBackroundColor),
-                color: context.watch<PlaylistPageProvider>().selectedPage == i
+                color: context.watch<SongslistPageProvider>().selectedPage == i
                     ? Colors.blue
                     : Colors.white),
             child: Center(
@@ -301,7 +339,7 @@ class _PlaylistpageState extends State<Playlistpage> {
                 i.toString(),
                 style: TextStyle(
                     color:
-                        context.watch<PlaylistPageProvider>().selectedPage == i
+                        context.watch<SongslistPageProvider>().selectedPage == i
                             ? Colors.white
                             : Colors.blue),
               ),
@@ -316,14 +354,14 @@ class _PlaylistpageState extends State<Playlistpage> {
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(color: AppPallate.scaffoldBackroundColor),
-            color: context.watch<PlaylistPageProvider>().selectedPage == 1
+            color: context.watch<SongslistPageProvider>().selectedPage == 1
                 ? Colors.blue
                 : Colors.white),
         child: Center(
           child: Text(
             "1",
             style: TextStyle(
-                color: context.watch<PlaylistPageProvider>().selectedPage == 1
+                color: context.watch<SongslistPageProvider>().selectedPage == 1
                     ? Colors.white
                     : Colors.blue),
           ),
@@ -333,7 +371,7 @@ class _PlaylistpageState extends State<Playlistpage> {
     return widgets;
   }
 
-  DataRow gettableRow(PlaylistModel model) {
+  DataRow gettableRow(SongModel model) {
     return DataRow(cells: [
       DataCell(
         Center(
@@ -367,8 +405,9 @@ class _PlaylistpageState extends State<Playlistpage> {
             IconButton(
                 color: Colors.blue,
                 onPressed: () {
-                  context.read<PlaylistPageProvider>().setSetectedModel(model);
-                  context.read<PlaylistPageProvider>().addUserSelected = true;
+                  context.read<SongslistPageProvider>().setSetectedModel(model);
+                  context.read<SongslistPageProvider>().addUserSelected = true;
+                  context.read<SongslistPageProvider>().setIsNew = false;
                 },
                 icon: const Icon(Icons.edit_document)),
             IconButton(

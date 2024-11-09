@@ -7,15 +7,29 @@ class UsersPageProvider extends ChangeNotifier {
   List<UserModel> userList = [];
 
   List<UserModel> selectedList = [];
+    int totalPages = 1;
+  bool addUserSelected = false;
 
-  set setSelectedList(List<UserModel> model) {
-    this.selectedList.addAll(model);
+   UserModel selectedModel = UserModel(name: "", mobileNumber: '', imageUrl: '',);
+     bool isNew = true;
+  get getIsNew => isNew;
+
+  set setIsNew(bool isNew) {
+    this.isNew = isNew;
     notifyListeners();
   }
 
-  int totalPages = 1;
-  bool addUserSelected = false;
-  bool get getAddUserSelected => this.addUserSelected;
+ setSetectedModel(UserModel model) {
+    selectedModel = model;
+    notifyListeners();
+  }
+  set setSelectedList(List<UserModel> model) {
+    selectedList.addAll(model);
+    notifyListeners();
+  }
+
+
+  bool get getAddUserSelected => addUserSelected;
 
   set setAddUserSelected(bool addUserSelected) {
     this.addUserSelected = addUserSelected;

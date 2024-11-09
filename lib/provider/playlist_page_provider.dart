@@ -5,34 +5,37 @@ class PlaylistPageProvider extends ChangeNotifier {
   List<PlaylistModel> playlistList = [];
 
   List<PlaylistModel> selectedList = [];
-   int selectedPage = 1;
+  int selectedPage = 1;
   int totalPages = 1;
-   bool addUserSelected = false;
+  bool addUserSelected = false;
 
+  PlaylistModel selectedModel = PlaylistModel(name: "", imageUrl: "");
+    bool isNew = true;
+  get getIsNew => isNew;
 
-  PlaylistModel selectedModel =PlaylistModel(name: "",imageUrl: "");
-
-
-setSetectedModel(PlaylistModel model){
-  selectedModel= model;
-  notifyListeners();
-}
-
-  set setSelectedList(List<PlaylistModel> model) {
-    this.selectedList.addAll(model);
+  set setIsNew(bool isNew) {
+    this.isNew = isNew;
     notifyListeners();
   }
 
 
- 
-  bool get getAddUserSelected => this.addUserSelected;
+  setSetectedModel(PlaylistModel model) {
+    selectedModel = model;
+    notifyListeners();
+  }
+
+  set setSelectedList(List<PlaylistModel> model) {
+    selectedList.addAll(model);
+    notifyListeners();
+  }
+
+  bool get getAddUserSelected => addUserSelected;
 
   set setAddUserSelected(bool addUserSelected) {
     this.addUserSelected = addUserSelected;
     notifyListeners();
   }
 
- 
   void getselectedList(int pageNumber) {
     selectedList.clear();
     int start = (pageNumber * 12) - 12;
@@ -57,137 +60,34 @@ setSetectedModel(PlaylistModel model){
     notifyListeners();
   }
 
-  /// ///////
   Future<void> getUsersLIst() async {
     await Future.delayed(const Duration(seconds: 1), () {
       playlistList.clear();
       playlistList.addAll([
-       
-      
         PlaylistModel(
-            name: "name",
+            name: "name1",
             imageUrl:
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
         PlaylistModel(
-            name: "name",
+            name: "name2",
             imageUrl:
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
-        PlaylistModel(
-            name: "name",
-            imageUrl:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
+        // PlaylistModel(
+        //     name: "name3",
+        //     imageUrl:
+        //         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
+        // PlaylistModel(
+        //     name: "name4",
+        //     imageUrl:
+        //         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
+        // PlaylistModel(
+        //     name: "name5",
+        //     imageUrl:
+        //         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
+        // PlaylistModel(
+        //     name: "name6",
+        //     imageUrl:
+        //         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnAusHk8prvj8i_jBTp_c-ViMgjSGEum7kFw&s"),
       ]);
     });
     totalPages = 0;

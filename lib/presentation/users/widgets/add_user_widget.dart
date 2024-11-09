@@ -13,13 +13,16 @@ class AddUserWidget extends StatefulWidget {
 }
 
 class _AddUserWidgetState extends State<AddUserWidget> {
- 
- 
- 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-
+  @override
+  void initState() {
+    _nameController.text = context.read<UsersPageProvider>().selectedModel.name;
+    _phoneController.text =
+        context.read<UsersPageProvider>().selectedModel.mobileNumber;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +49,21 @@ class _AddUserWidgetState extends State<AddUserWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Add User",
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: AppPallate.darkBlue),
-                ),
+                context.read<UsersPageProvider>().isNew
+                    ? const Text(
+                        "Add User",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: AppPallate.darkBlue),
+                      )
+                    : const Text(
+                        "Edit User",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: AppPallate.darkBlue),
+                      ),
                 const SizedBox(
                   height: 30,
                 ),
@@ -91,8 +102,15 @@ class _AddUserWidgetState extends State<AddUserWidget> {
                               WidgetStatePropertyAll(Colors.blue.shade500),
                         ),
                         onPressed: () {},
-                        child: const Text(
+                        child: 
+                        context.read<UsersPageProvider>().isNew?
+                        const Text(
                           "Add",
+                          style: TextStyle(
+                              fontSize: 14, color: AppPallate.whiteColor),
+                        ):
+                        const Text(
+                          "Save",
                           style: TextStyle(
                               fontSize: 14, color: AppPallate.whiteColor),
                         ),
@@ -112,7 +130,10 @@ class _AddUserWidgetState extends State<AddUserWidget> {
                               WidgetStatePropertyAll(Colors.black38),
                         ),
                         onPressed: () {},
-                        child: const Text(
+                        child: const
+                        
+                        
+                         Text(
                           "Reset",
                           style: TextStyle(
                               fontSize: 14, color: AppPallate.whiteColor),
@@ -149,5 +170,4 @@ class _AddUserWidgetState extends State<AddUserWidget> {
           ),
         ));
   }
-
 }

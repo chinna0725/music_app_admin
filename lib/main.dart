@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app_admin/presentation/landing_page/screens/landing_screen.dart';
 import 'package:music_app_admin/provider/landing_page_provider.dart';
 import 'package:music_app_admin/provider/playlist_page_provider.dart';
+import 'package:music_app_admin/provider/songslist_page_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'provider/users_page_provider.dart';
@@ -21,6 +22,9 @@ void main() {
     ),
     ChangeNotifierProvider(
       create: (context) => PlaylistPageProvider(),
+    ),
+     ChangeNotifierProvider(
+      create: (context) => SongslistPageProvider(),
     ),
   ], child: const MyApp()));
 }

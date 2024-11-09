@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:music_app_admin/models/user_model.dart';
-import 'package:music_app_admin/presentation/users/widgets/add_user_widget.dart';
-import 'package:music_app_admin/provider/users_page_provider.dart';
-
-import 'package:music_app_admin/utils/app_pallate.dart';
-import 'package:music_app_admin/utils/decoration_utils.dart';
-import 'package:music_app_admin/utils/screen_utils.dart';
+import 'package:music_app_admin/models/playlist_model.dart';
+import 'package:music_app_admin/presentation/playlist/widgets/add_playlist_widget.dart';
+import 'package:music_app_admin/provider/playlist_page_provider.dart';
 import 'package:provider/provider.dart';
 
-class UsersPage extends StatefulWidget {
-  const UsersPage({super.key});
+import '../../../utils/app_pallate.dart';
+import '../../../utils/decoration_utils.dart';
+import '../../../utils/screen_utils.dart';
+
+class Playlistpage extends StatefulWidget {
+  const Playlistpage({super.key});
 
   @override
-  State<UsersPage> createState() => _UsersPageState();
+  State<Playlistpage> createState() => _PlaylistpageState();
 }
 
-class _UsersPageState extends State<UsersPage> {
+class _PlaylistpageState extends State<Playlistpage> {
   TextEditingController searchContrller = TextEditingController();
   bool onSearch = false;
+
   @override
   void initState() {
-    context.read<UsersPageProvider>().getUsersLIst();
-    //context.read<UsersPageProvider>().addUserSelected = false;
+    context.read<PlaylistPageProvider>().getUsersLIst();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    return context.watch<UsersPageProvider>().getAddUserSelected
-        ? const AddUserWidget()
+    return context.watch<PlaylistPageProvider>().getAddUserSelected
+        ? const AddPlaylistWidget()
         : SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,7 +39,7 @@ class _UsersPageState extends State<UsersPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      "Manage Users",
+                      "Manage Playlists",
                       style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.w800,
@@ -56,44 +56,18 @@ class _UsersPageState extends State<UsersPage> {
                             ),
                           )),
                       onPressed: () {
-                        context.read<UsersPageProvider>().setAddUserSelected =
-                            true;
-                        context.read<UsersPageProvider>().setIsNew = true;
+                        context
+                            .read<PlaylistPageProvider>()
+                            .setAddUserSelected = true;
+                        context.read<PlaylistPageProvider>().setIsNew = true;
                       },
                       child: const Text(
-                        "Add User",
+                        "Add Playlist",
                         style: TextStyle(color: Colors.black),
                       ),
                     )
                   ],
                 ),
-
-                // GridView.count(
-                //   physics: const NeverScrollableScrollPhysics(),
-                //   shrinkWrap: true,
-                //   crossAxisCount: ScreenUtils.isMobileView(context)
-                //       ? 1
-                //       : ScreenUtils.isTabletView(context)
-                //           ? 2
-                //           : 2,
-                //   crossAxisSpacing: size.width * 0.020,
-                //   mainAxisSpacing: size.width * 0.020,
-                //   childAspectRatio: ScreenUtils.isMobileView(context)
-                //       ? 3.1
-                //       : ScreenUtils.isTabletView(context)
-                //           ? 2.5
-                //           : 3.5,
-                //   children: [
-                //     Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: getGridWidget("Playlists", Icons.album_outlined, 25,
-                //             const Color.fromARGB(255, 65, 55, 211), context)),
-                //     Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: getGridWidget("Songs", Icons.album_outlined, 25,
-                //             const Color.fromARGB(255, 65, 55, 211), context)),
-                //   ],
-                // ),
 
                 const SizedBox(
                   height: 20,
@@ -144,7 +118,7 @@ class _UsersPageState extends State<UsersPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        "Users",
+                        "Playlist",
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
@@ -153,7 +127,7 @@ class _UsersPageState extends State<UsersPage> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Consumer<UsersPageProvider>(
+                      Consumer<PlaylistPageProvider>(
                         builder: (context, provider, child) {
                           return provider.selectedList.isEmpty
                               ? SizedBox(
@@ -161,14 +135,16 @@ class _UsersPageState extends State<UsersPage> {
                                   width: size.width,
                                   child: const Center(
                                     child: Text(
-                                      "No Users",
+                                      "No Playlist",
                                       style: TextStyle(color: Colors.black45),
                                     ),
                                   ),
                                 )
                               : ScreenUtils.isMobileView(context)
                                   ? FittedBox(
-                                      child: getDatatableWidget(provider, size))
+                                      child: Center(
+                                          child: getDatatableWidget(
+                                              provider, size)))
                                   : getDatatableWidget(provider, size);
                         },
                       )
@@ -178,7 +154,7 @@ class _UsersPageState extends State<UsersPage> {
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Consumer<UsersPageProvider>(
+                  child: Consumer<PlaylistPageProvider>(
                     builder: (context, value, child) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -192,51 +168,55 @@ class _UsersPageState extends State<UsersPage> {
           );
   }
 
-  Widget getDatatableWidget(UsersPageProvider provider, Size size) {
-    return SizedBox(
-      width: size.width * 0.95,
-      child: DataTable(
-          horizontalMargin: 1,
-          dataRowHeight: 100,
-          columns: const [
-            // DataColumn(
-            //   headingRowAlignment: MainAxisAlignment.center,
-            //   label: Text(
-            //     "Image",
-            //     style: TextStyle(
-            //         fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
-            //   ),
-            // ),
-            DataColumn(
-              headingRowAlignment: MainAxisAlignment.center,
-              label: Text(
-                "Name",
-                style: TextStyle(
-                    fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
+  Widget getDatatableWidget(PlaylistPageProvider provider, Size size) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      scrollDirection: Axis.horizontal,
+      child: SizedBox(
+        width: size.width * 0.8,
+        child: DataTable(
+            horizontalMargin: 1,
+            dataRowHeight: 100,
+            columns: const [
+              // DataColumn(
+              //   headingRowAlignment: MainAxisAlignment.center,
+              //   label: Text(
+              //     "Image",
+              //     style: TextStyle(
+              //         fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
+              //   ),
+              // ),
+              DataColumn(
+                headingRowAlignment: MainAxisAlignment.center,
+                label: Text(
+                  "Image",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
+                ),
               ),
-            ),
-            DataColumn(
-              headingRowAlignment: MainAxisAlignment.center,
-              label: Text(
-                "Mobile",
-                style: TextStyle(
-                    fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
+              DataColumn(
+                headingRowAlignment: MainAxisAlignment.center,
+                label: Text(
+                  "Name",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
+                ),
               ),
-            ),
-            DataColumn(
-              headingRowAlignment: MainAxisAlignment.center,
-              label: Text(
-                "Action",
-                style: TextStyle(
-                    fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
+              DataColumn(
+                headingRowAlignment: MainAxisAlignment.center,
+                label: Text(
+                  "Action",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
+                ),
               ),
-            ),
-          ],
-          rows: provider.selectedList.map(
-            (e) {
-              return gettableRow(e);
-            },
-          ).toList()),
+            ],
+            rows: provider.selectedList.map(
+              (e) {
+                return gettableRow(e);
+              },
+            ).toList()),
+      ),
     );
   }
 
@@ -247,25 +227,25 @@ class _UsersPageState extends State<UsersPage> {
       });
 
       print("in");
-      context.read<UsersPageProvider>().selectedList.clear();
-      List<UserModel> ul = [];
-      context.read<UsersPageProvider>().userList.forEach(
+      context.read<PlaylistPageProvider>().selectedList.clear();
+      List<PlaylistModel> ul = [];
+      context.read<PlaylistPageProvider>().playlistList.forEach(
         (e) {
-          if (e.name.contains(value) || e.mobileNumber.contains(value)) {
+          if (e.name.contains(value)) {
             ul.add(e);
           }
         },
       );
 
-      context.read<UsersPageProvider>().setSelectedList = ul;
+      context.read<PlaylistPageProvider>().setSelectedList = ul;
     } else {
       setState(() {
         onSearch = false;
       });
       print("out");
       context
-          .read<UsersPageProvider>()
-          .getselectedList(context.read<UsersPageProvider>().selectedPage);
+          .read<PlaylistPageProvider>()
+          .getselectedList(context.read<PlaylistPageProvider>().selectedPage);
     }
   }
 
@@ -276,9 +256,9 @@ class _UsersPageState extends State<UsersPage> {
       for (int i = 1; i <= value; i++) {
         widgets.add(InkWell(
           onTap: () {
-            context.read<UsersPageProvider>().selectedPage = i;
+            context.read<PlaylistPageProvider>().selectedPage = i;
 
-            context.read<UsersPageProvider>().getselectedList(i);
+            context.read<PlaylistPageProvider>().getselectedList(i);
           },
           child: Container(
             height: 40,
@@ -286,16 +266,17 @@ class _UsersPageState extends State<UsersPage> {
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
                 border: Border.all(color: AppPallate.scaffoldBackroundColor),
-                color: context.watch<UsersPageProvider>().selectedPage == i
+                color: context.watch<PlaylistPageProvider>().selectedPage == i
                     ? Colors.blue
                     : Colors.white),
             child: Center(
               child: Text(
                 i.toString(),
                 style: TextStyle(
-                    color: context.watch<UsersPageProvider>().selectedPage == i
-                        ? Colors.white
-                        : Colors.blue),
+                    color:
+                        context.watch<PlaylistPageProvider>().selectedPage == i
+                            ? Colors.white
+                            : Colors.blue),
               ),
             ),
           ),
@@ -308,49 +289,46 @@ class _UsersPageState extends State<UsersPage> {
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(color: AppPallate.scaffoldBackroundColor),
-            color: context.watch<UsersPageProvider>().selectedPage == 1
+            color: context.watch<PlaylistPageProvider>().selectedPage == 1
                 ? Colors.blue
                 : Colors.white),
         child: Center(
           child: Text(
             "1",
             style: TextStyle(
-                color: context.watch<UsersPageProvider>().selectedPage == 1
+                color: context.watch<PlaylistPageProvider>().selectedPage == 1
                     ? Colors.white
                     : Colors.blue),
           ),
         ),
       ));
     }
-
     return widgets;
   }
 
-  DataRow gettableRow(UserModel model) {
+  DataRow gettableRow(PlaylistModel model) {
     return DataRow(cells: [
-      // DataCell(
-      //   Center(
-      //     child: Padding(
-      //       padding: const EdgeInsets.all(8.0),
-      //       child: CircleAvatar(
-      //         backgroundImage: NetworkImage(model.imageUrl),
-      //         radius: 20,
-      //       ),
-      //     ),
-      //   ),
-      // ),
       DataCell(
         Center(
-          child: Text(
-            model.name,
-            style: const TextStyle(color: AppPallate.darkBlue),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.black12,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                image: DecorationImage(
+                    image: NetworkImage(model.imageUrl), fit: BoxFit.fill),
+              ),
+            ),
           ),
         ),
       ),
       DataCell(
         Center(
           child: Text(
-            model.mobileNumber,
+            model.name,
             style: const TextStyle(color: AppPallate.darkBlue),
           ),
         ),
@@ -362,9 +340,9 @@ class _UsersPageState extends State<UsersPage> {
             IconButton(
                 color: Colors.blue,
                 onPressed: () {
-                  context.read<UsersPageProvider>().setSetectedModel(model);
-                  context.read<UsersPageProvider>().setAddUserSelected = true;
-                  context.read<UsersPageProvider>().setIsNew = false;
+                  context.read<PlaylistPageProvider>().setSetectedModel(model);
+                  context.read<PlaylistPageProvider>().addUserSelected = true;
+                  context.read<PlaylistPageProvider>().setIsNew = false;
                 },
                 icon: const Icon(Icons.edit_document)),
             IconButton(

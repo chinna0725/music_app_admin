@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:music_app_admin/presentation/playlist_page/screens/playlist_page.dart';
+import 'package:music_app_admin/presentation/playlist/screens/playlist_page.dart';
+import 'package:music_app_admin/presentation/songs/screens/songslist_page.dart';
 import 'package:music_app_admin/presentation/users/screens/users_page.dart';
 import 'package:music_app_admin/presentation/landing_page/widgets/side_drawer_widget.dart';
-import 'package:music_app_admin/presentation/users/widgets/add_user_widget.dart';
 import 'package:music_app_admin/provider/landing_page_provider.dart';
 import 'package:music_app_admin/utils/app_pallate.dart';
 import 'package:music_app_admin/utils/decoration_utils.dart';
@@ -27,9 +27,17 @@ class _LandingScreenState extends State<LandingScreen> {
         //foregroundColor: AppPallate.whiteColor,
         backgroundColor: Colors.white,
         shadowColor: AppPallate.scaffoldBackroundColor.withOpacity(0.5),
-
         title: const Text("Admin"),
         elevation: 2,
+        leading: ScreenUtils.isMobileView(context) ||
+                ScreenUtils.isTabletView(context)
+            ? null
+            : IconButton(
+                onPressed: () {
+                  context.read<LandingPageProvider>().setIsExpanded =
+                      !context.read<LandingPageProvider>().getIsExpanded;
+                },
+                icon: const Icon(Icons.menu)),
         // shadowColor: AppPallate.scaffoldBackroundColor,
       ),
       drawer:
@@ -48,7 +56,7 @@ class _LandingScreenState extends State<LandingScreen> {
             Flexible(
               flex: 1,
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(seconds: 10),
                 decoration: BoxDecoration(
                   boxShadow: DecorationUtils.boxShadow,
                   color: AppPallate.whiteColor,
@@ -57,7 +65,7 @@ class _LandingScreenState extends State<LandingScreen> {
               ),
             ),
           Flexible(
-            flex: 4,
+            flex: 5,
             child:
                 Padding(padding: const EdgeInsets.all(28.0), child: _getBody()),
           )
@@ -69,11 +77,13 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget _getBody() {
     switch (context.watch<LandingPageProvider>().getSelectedTitleIndex) {
       case 0:
-    
         return const UsersPage();
 
-        case 1:
+      case 1:
         return const Playlistpage();
+
+      case 2:
+        return const SongslistPage();
 
       default:
         return Container(
