@@ -1,9 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app_admin/provider/playlist_page_provider.dart';
+import 'package:music_app_admin/utils/common_methods.dart';
 import 'package:music_app_admin/utils/decoration_utils.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:flutter/foundation.dart';
 import '../../../utils/app_pallate.dart';
 
 class AddPlaylistWidget extends StatefulWidget {
@@ -191,14 +192,39 @@ class _AddPlaylistWidgetState extends State<AddPlaylistWidget> {
                             backgroundColor:
                                 WidgetStatePropertyAll(Colors.blue.shade500),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            if (_nameController.text.isNotEmpty &&
+                                _imageController.text.isNotEmpty &&
+                                _imageController.text != "No File Choosen") {
+                              if (context.read<PlaylistPageProvider>().isNew) {
+                                try {
+                                  context
+                                      .read<PlaylistPageProvider>()
+                                      .addPlaylist(
+                                          _nameController.text.toString(),
+                                          pickedFile!);
+                                } catch (e) {
+                                  CommonMethods.showErrorAlertDialog(
+                                      context, e.toString());
+                                }
+                              } else {
+                                print("--save pressed----");
+                              }
+                            } else {
+                              CommonMethods.showErrorAlertDialog(
+                                  context, "Enter all fields!");
+                            }
+                          },
                           child: context.watch<PlaylistPageProvider>().isNew
-                              ? const Text(
-                                  "Add",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppPallate.whiteColor),
-                                )
+                              ? (context.watch<PlaylistPageProvider>().loading
+                                  ? const Center(
+                                      child: CircularProgressIndicator())
+                                  : const Text(
+                                      "Add",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppPallate.whiteColor),
+                                    ))
                               : const Text(
                                   "Save",
                                   style: TextStyle(
@@ -257,6 +283,7 @@ class _AddPlaylistWidgetState extends State<AddPlaylistWidget> {
     );
 
     if (result != null) {
+      // Get the directory to save the file
       setState(() {
         pickedFile = result.files.first.bytes;
         _imageController.text = result.files.first.name;

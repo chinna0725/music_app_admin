@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app_admin/provider/songslist_page_provider.dart';
 import 'package:provider/provider.dart';
-
 import '../../../utils/app_pallate.dart';
 import '../../../utils/decoration_utils.dart';
 
@@ -75,7 +73,7 @@ class _AddSongWidgetState extends State<AddSongWidget> {
                               color: AppPallate.darkBlue),
                         )
                       : const Text(
-                          "Edit",
+                          "Edit Song",
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
@@ -139,10 +137,11 @@ class _AddSongWidgetState extends State<AddSongWidget> {
                           ),
                           enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                bottomLeft: Radius.circular(8),
-                                bottomRight: Radius.circular(8),
-                                topRight: Radius.circular(8)),
+                              topLeft: Radius.circular(8),
+                              bottomLeft: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
                             borderSide: BorderSide(
                               color: Colors.black12,
                               width: 1,
@@ -261,16 +260,19 @@ class _AddSongWidgetState extends State<AddSongWidget> {
                                 WidgetStatePropertyAll(Colors.blue.shade500),
                           ),
                           onPressed: () {},
-                          child:
-                          context.read<SongslistPageProvider>().isNew? const Text(
-                            "Add",
-                            style: TextStyle(
-                                fontSize: 14, color: AppPallate.whiteColor),
-                          ):const Text(
-                            "Save",
-                            style: TextStyle(
-                                fontSize: 14, color: AppPallate.whiteColor),
-                          ),
+                          child: context.read<SongslistPageProvider>().isNew
+                              ? const Text(
+                                  "Add",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppPallate.whiteColor),
+                                )
+                              : const Text(
+                                  "Save",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppPallate.whiteColor),
+                                ),
                         ),
                         const SizedBox(
                           width: 10,

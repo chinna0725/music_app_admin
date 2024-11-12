@@ -3,6 +3,7 @@ import 'package:music_app_admin/models/playlist_model.dart';
 import 'package:music_app_admin/presentation/songs/widgets/add_song_widget.dart';
 import 'package:music_app_admin/provider/playlist_page_provider.dart';
 import 'package:music_app_admin/provider/songslist_page_provider.dart';
+import 'package:music_app_admin/utils/common_methods.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/song_model.dart';
@@ -412,7 +413,12 @@ class _SongslistPageState extends State<SongslistPage> {
                 icon: const Icon(Icons.edit_document)),
             IconButton(
                 color: Colors.red,
-                onPressed: () {},
+                onPressed: () {
+                   CommonMethods.
+                  showAlertDialog(context, (){
+                    print("object");
+                  });
+                },
                 icon: const Icon(Icons.delete)),
           ],
         ),

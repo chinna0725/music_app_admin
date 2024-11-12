@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:music_app_admin/models/user_model.dart';
 import 'package:music_app_admin/presentation/users/widgets/add_user_widget.dart';
 import 'package:music_app_admin/provider/users_page_provider.dart';
-
 import 'package:music_app_admin/utils/app_pallate.dart';
+import 'package:music_app_admin/utils/common_methods.dart';
 import 'package:music_app_admin/utils/decoration_utils.dart';
 import 'package:music_app_admin/utils/screen_utils.dart';
 import 'package:provider/provider.dart';
@@ -369,7 +369,12 @@ class _UsersPageState extends State<UsersPage> {
                 icon: const Icon(Icons.edit_document)),
             IconButton(
                 color: Colors.red,
-                onPressed: () {},
+                onPressed: () {
+                  CommonMethods.
+                  showAlertDialog(context, (){
+                    print("object");
+                  });
+                },
                 icon: const Icon(Icons.delete)),
           ],
         ),
@@ -377,6 +382,7 @@ class _UsersPageState extends State<UsersPage> {
     ]);
   }
 
+ 
   Widget getGridWidget(String title, IconData icon, int count, Color color,
       BuildContext context) {
     return Container(

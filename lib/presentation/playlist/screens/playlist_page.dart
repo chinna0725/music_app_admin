@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:music_app_admin/models/playlist_model.dart';
 import 'package:music_app_admin/presentation/playlist/widgets/add_playlist_widget.dart';
 import 'package:music_app_admin/provider/playlist_page_provider.dart';
+import 'package:music_app_admin/utils/common_methods.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utils/app_pallate.dart';
@@ -21,7 +22,7 @@ class _PlaylistpageState extends State<Playlistpage> {
 
   @override
   void initState() {
-    context.read<PlaylistPageProvider>().getUsersLIst();
+    context.read<PlaylistPageProvider>().getPlayList();
     super.initState();
   }
 
@@ -319,7 +320,8 @@ class _PlaylistpageState extends State<Playlistpage> {
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
                 image: DecorationImage(
-                    image: NetworkImage(model.imageUrl), fit: BoxFit.fill),
+                    image: NetworkImage(model.imageUrl.toString()),
+                    fit: BoxFit.fill),
               ),
             ),
           ),
@@ -347,7 +349,11 @@ class _PlaylistpageState extends State<Playlistpage> {
                 icon: const Icon(Icons.edit_document)),
             IconButton(
                 color: Colors.red,
-                onPressed: () {},
+                onPressed: () {
+                  CommonMethods.showAlertDialog(context, () {
+                    print("object");
+                  });
+                },
                 icon: const Icon(Icons.delete)),
           ],
         ),

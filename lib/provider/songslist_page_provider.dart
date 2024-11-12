@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_app_admin/models/song_model.dart';
 
-import '../models/playlist_model.dart';
 
 class SongslistPageProvider extends ChangeNotifier {
   List<SongModel> songlistList = [];
