@@ -1,9 +1,11 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:music_app_admin/presentation/auth/screens/confirm_password_screen.dart';
+import 'package:music_app_admin/presentation/auth/screens/login_screen.dart';
 import 'package:music_app_admin/presentation/landing_page/screens/landing_screen.dart';
 import 'package:music_app_admin/provider/landing_page_provider.dart';
+import 'package:music_app_admin/provider/login_page_provider.dart';
 import 'package:music_app_admin/provider/playlist_page_provider.dart';
 import 'package:music_app_admin/provider/songslist_page_provider.dart';
 import 'package:provider/provider.dart';
@@ -12,8 +14,7 @@ import 'provider/users_page_provider.dart';
 import 'utils/app_pallate.dart';
 
 void main() {
-  runApp(
-    MultiProvider(providers: [
+  runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (context) => LandingPageProvider(),
     ),
@@ -23,24 +24,36 @@ void main() {
     ChangeNotifierProvider(
       create: (context) => PlaylistPageProvider(),
     ),
-     ChangeNotifierProvider(
+    ChangeNotifierProvider(
       create: (context) => SongslistPageProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (context) => LoginPageProvider(),
     ),
   ], child: const MyApp()));
 }
 
+// <base href="$FLUTTER_BASE_HREF">
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const LandingScreen();
+        return const Login();
       },
       routes: <RouteBase>[
         GoRoute(
-          path: 'landingScreen',
+          path: '/landingScreen',
           builder: (BuildContext context, GoRouterState state) {
             return const LandingScreen();
+          },
+        ),
+        GoRoute(
+          path: '/confirmPasswordScreen',
+          builder: (context, state) {
+           
+            final String? token =state.uri.queryParameters['token'];
+            return ConfirmPasswordScreen(token: token ?? "empty");
           },
         ),
       ],
@@ -61,7 +74,7 @@ class MyApp extends StatelessWidget {
           PointerDeviceKind.touch,
         },
       ),
-      title: 'Flutter Demo',
+      title: 'Shambala',
       theme: ThemeData(
           fontFamily: 'Poppins',
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

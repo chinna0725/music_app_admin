@@ -4,6 +4,7 @@ import 'package:music_app_admin/presentation/songs/screens/songslist_page.dart';
 import 'package:music_app_admin/presentation/users/screens/users_page.dart';
 import 'package:music_app_admin/presentation/landing_page/widgets/side_drawer_widget.dart';
 import 'package:music_app_admin/provider/landing_page_provider.dart';
+import 'package:music_app_admin/provider/playlist_page_provider.dart';
 import 'package:music_app_admin/utils/app_pallate.dart';
 import 'package:music_app_admin/utils/decoration_utils.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,12 @@ class LandingScreen extends StatefulWidget {
 }
 
 class _LandingScreenState extends State<LandingScreen> {
+  @override
+  void initState() {
+    context.read<PlaylistPageProvider>().getPlayList();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +45,6 @@ class _LandingScreenState extends State<LandingScreen> {
                       !context.read<LandingPageProvider>().getIsExpanded;
                 },
                 icon: const Icon(Icons.menu)),
-        // shadowColor: AppPallate.scaffoldBackroundColor,
       ),
       drawer:
           ScreenUtils.isMobileView(context) || ScreenUtils.isTabletView(context)

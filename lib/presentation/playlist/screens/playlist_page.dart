@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:music_app_admin/models/playlist_model.dart';
 import 'package:music_app_admin/presentation/playlist/widgets/add_playlist_widget.dart';
 import 'package:music_app_admin/provider/playlist_page_provider.dart';
+import 'package:music_app_admin/utils/animation_loader.dart';
 import 'package:music_app_admin/utils/common_methods.dart';
 import 'package:provider/provider.dart';
 
@@ -31,142 +33,135 @@ class _PlaylistpageState extends State<Playlistpage> {
     final size = MediaQuery.sizeOf(context);
     return context.watch<PlaylistPageProvider>().getAddUserSelected
         ? const AddPlaylistWidget()
-        : SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        : context.watch<PlaylistPageProvider>().mainLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Manage Playlists",
-                      style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w800,
-                          color: AppPallate.darkBlue),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Manage Playlists",
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w800,
+                              color: AppPallate.darkBlue),
+                        ),
+                        ElevatedButton(
+                          style: const ButtonStyle(
+                              overlayColor: WidgetStatePropertyAll(Colors.blue),
+                              backgroundColor:
+                                  WidgetStatePropertyAll(AppPallate.whiteColor),
+                              side: WidgetStatePropertyAll(
+                                BorderSide(
+                                  color: Colors.blue,
+                                ),
+                              )),
+                          onPressed: () {
+                            context
+                                .read<PlaylistPageProvider>()
+                                .setAddUserSelected = true;
+                            context.read<PlaylistPageProvider>().setIsNew =
+                                true;
+                          },
+                          child: const Text(
+                            "Add Playlist",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        )
+                      ],
                     ),
-                    ElevatedButton(
-                      style: const ButtonStyle(
-                          overlayColor: WidgetStatePropertyAll(Colors.blue),
-                          backgroundColor:
-                              WidgetStatePropertyAll(AppPallate.whiteColor),
-                          side: WidgetStatePropertyAll(
-                            BorderSide(
-                              color: Colors.blue,
-                            ),
-                          )),
-                      onPressed: () {
-                        context
-                            .read<PlaylistPageProvider>()
-                            .setAddUserSelected = true;
-                        context.read<PlaylistPageProvider>().setIsNew = true;
-                      },
-                      child: const Text(
-                        "Add Playlist",
-                        style: TextStyle(color: Colors.black),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      height: 50,
+                      width: ScreenUtils.isMobileView(context) ||
+                              ScreenUtils.isTabletView(context)
+                          ? size.width
+                          : size.width * 0.6,
+                      padding: const EdgeInsets.all(0),
+                      decoration: BoxDecoration(
+                        color: AppPallate.whiteColor,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: DecorationUtils.boxShadow,
                       ),
-                    )
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          textAlignVertical: TextAlignVertical.center,
+                          controller: searchContrller,
+                          onSubmitted: (value) => _getSearchList(value),
+                          onChanged: (value) => _getSearchList(value),
+                          decoration: const InputDecoration(
+                            hintText: "Search",
+                            contentPadding: EdgeInsets.all(12),
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      width: size.width,
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: AppPallate.whiteColor,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: DecorationUtils.boxShadow,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Playlist",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: AppPallate.darkBlue),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Consumer<PlaylistPageProvider>(
+                            builder: (context, provider, child) {
+                              return provider.selectedList.isEmpty
+                                  ? const CustomAnimationLoaderWidget(
+                                      text: "No Playlist",
+                                      animation: "assets/53207-empty-file.json",
+                                    )
+                                  : ScreenUtils.isMobileView(context)
+                                      ? FittedBox(
+                                          child: Center(
+                                              child: getDatatableWidget(
+                                                  provider, size)))
+                                      : getDatatableWidget(provider, size);
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Consumer<PlaylistPageProvider>(
+                        builder: (context, value, child) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: getPageNumberWidget(value.totalPages),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
-
-                const SizedBox(
-                  height: 20,
-                ),
-
-                Container(
-                  height: 50,
-                  width: ScreenUtils.isMobileView(context) ||
-                          ScreenUtils.isTabletView(context)
-                      ? size.width
-                      : size.width * 0.6,
-                  padding: const EdgeInsets.all(0),
-                  decoration: BoxDecoration(
-                    color: AppPallate.whiteColor,
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    boxShadow: DecorationUtils.boxShadow,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      textAlignVertical: TextAlignVertical.center,
-                      controller: searchContrller,
-                      onSubmitted: (value) => _getSearchList(value),
-                      onChanged: (value) => _getSearchList(value),
-                      decoration: const InputDecoration(
-                        hintText: "Search",
-                        contentPadding: EdgeInsets.all(12),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 20,
-                ),
-
-                //  userlist container
-                Container(
-                  width: size.width,
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: AppPallate.whiteColor,
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    boxShadow: DecorationUtils.boxShadow,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Playlist",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: AppPallate.darkBlue),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Consumer<PlaylistPageProvider>(
-                        builder: (context, provider, child) {
-                          return provider.selectedList.isEmpty
-                              ? SizedBox(
-                                  height: 100,
-                                  width: size.width,
-                                  child: const Center(
-                                    child: Text(
-                                      "No Playlist",
-                                      style: TextStyle(color: Colors.black45),
-                                    ),
-                                  ),
-                                )
-                              : ScreenUtils.isMobileView(context)
-                                  ? FittedBox(
-                                      child: Center(
-                                          child: getDatatableWidget(
-                                              provider, size)))
-                                  : getDatatableWidget(provider, size);
-                        },
-                      )
-                    ],
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Consumer<PlaylistPageProvider>(
-                    builder: (context, value, child) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: getPageNumberWidget(value.totalPages),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
+              );
   }
 
   Widget getDatatableWidget(PlaylistPageProvider provider, Size size) {
@@ -179,14 +174,6 @@ class _PlaylistpageState extends State<Playlistpage> {
             horizontalMargin: 1,
             dataRowHeight: 100,
             columns: const [
-              // DataColumn(
-              //   headingRowAlignment: MainAxisAlignment.center,
-              //   label: Text(
-              //     "Image",
-              //     style: TextStyle(
-              //         fontWeight: FontWeight.w800, color: AppPallate.darkBlue),
-              //   ),
-              // ),
               DataColumn(
                 headingRowAlignment: MainAxisAlignment.center,
                 label: Text(
@@ -351,7 +338,10 @@ class _PlaylistpageState extends State<Playlistpage> {
                 color: Colors.red,
                 onPressed: () {
                   CommonMethods.showAlertDialog(context, () {
-                    print("object");
+                    context
+                        .read<PlaylistPageProvider>()
+                        .deletePlaylist(model.id, context);
+                    context.pop();
                   });
                 },
                 icon: const Icon(Icons.delete)),

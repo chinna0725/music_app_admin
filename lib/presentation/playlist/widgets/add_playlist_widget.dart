@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app_admin/models/playlist_model.dart';
 import 'package:music_app_admin/provider/playlist_page_provider.dart';
 import 'package:music_app_admin/utils/common_methods.dart';
 import 'package:music_app_admin/utils/decoration_utils.dart';
@@ -47,6 +48,8 @@ class _AddPlaylistWidgetState extends State<AddPlaylistWidget> {
           children: [
             IconButton(
               onPressed: () {
+                context.read<PlaylistPageProvider>().setSetectedModel(
+                    PlaylistModel(id: "", name: "", imageUrl: ""));
                 context.read<PlaylistPageProvider>().setAddUserSelected = false;
               },
               icon: const Icon(Icons.arrow_back, color: AppPallate.darkBlue),
@@ -131,10 +134,11 @@ class _AddPlaylistWidgetState extends State<AddPlaylistWidget> {
                           ),
                           enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                bottomLeft: Radius.circular(8),
-                                bottomRight: Radius.circular(8),
-                                topRight: Radius.circular(8)),
+                              topLeft: Radius.circular(8),
+                              bottomLeft: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
                             borderSide: BorderSide(
                               color: Colors.black12,
                               width: 1,
@@ -147,7 +151,6 @@ class _AddPlaylistWidgetState extends State<AddPlaylistWidget> {
                       ),
                     ),
                   ),
-
                   pickedFile != null
                       ? Container(
                           margin: const EdgeInsets.only(left: 10, top: 20),
@@ -208,6 +211,27 @@ class _AddPlaylistWidgetState extends State<AddPlaylistWidget> {
                                       context, e.toString());
                                 }
                               } else {
+                                if (_nameController.text.isNotEmpty &&
+                                    _imageController.text.isNotEmpty) {
+                                  PlaylistModel model = PlaylistModel(
+                                      id: context
+                                          .read<PlaylistPageProvider>()
+                                          .selectedModel
+                                          .id,
+                                      name: _nameController.text,
+                                      imageUrl: "");
+
+                                  if (pickedFile != null) {
+                                    context
+                                        .read<PlaylistPageProvider>()
+                                        .updatePlaylist(model, pickedFile!);
+                                  } else {
+                                    context
+                                        .read<PlaylistPageProvider>()
+                                        .updatePlaylist(model, Uint8List(0));
+                                  }
+                                }
+
                                 print("--save pressed----");
                               }
                             } else {

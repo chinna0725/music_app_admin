@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:music_app_admin/provider/login_page_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -9,18 +13,32 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final TextEditingController _emailController =
-      TextEditingController(text: 'keerthana@ignitelabs.in');
+      TextEditingController(text: 'deepika@ignitelabs.in');
   final TextEditingController _passwordController =
-      TextEditingController(text: "Keerthana@123");
+      TextEditingController(text: "Ignite@123");
   final _formKey = GlobalKey<FormState>();
   bool _obscureTextPassword = true;
-  bool _rememberMe = false;
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     _emailController.dispose();
     _passwordController.dispose();
+    await getUserState();
     super.dispose();
+  }
+
+  getUserState() async {
+    print("------------");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final bool? isLoggedIn = prefs.getBool('isLoggedIn');
+    print("-log-----$isLoggedIn----");
+
+    if (isLoggedIn != null) {
+      if (isLoggedIn) {
+        context.pushReplacement("landingScreen");
+      }
+    }
   }
 
   void _togglePasswordVisibility() {
@@ -66,19 +84,6 @@ class _LoginState extends State<Login> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
-          Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                      'assets/images/background_image.jpg'), // Replace with your image asset
-                  fit: BoxFit.cover, // Cover the entire screen
-                ),
-              ),
-            ),
-          ),
-          // Form Container
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
@@ -106,62 +111,20 @@ class _LoginState extends State<Login> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          const Center(
-                            child: Icon(
-                              Icons.flash_on,
-                              color: Colors.blueAccent,
-                              size: 50,
-                            ),
-                          ),
+                          Center(
+                              child: Image.asset(
+                            "assets/shambala.png",
+                            height: 100,
+                          )),
                           const SizedBox(height: 10),
                           const Center(
                             child: Text(
-                              'Login',
+                              'Admin',
                               style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          // const Center(
-                          //   child: Text(
-                          //     'Explore our SaaS product!',
-                          //     style: TextStyle(
-                          //         fontSize: 16, color: Colors.grey),
-                          //   ),
-                          // ),
-                          const SizedBox(height: 30),
-                          // ElevatedButton.icon(
-                          //   onPressed: () {},
-                          //   icon: const  Icon(
-                          //     FontAwesomeIcons.google,
-                          //     color: Color(0xFF4285F4), // Google blue color
-                          //   ),
-                          //   label: const Text(
-                          //     'Sign in with Google',
-                          //     style: TextStyle(color: Colors.black),
-                          //   ),
-                          //   style: ElevatedButton.styleFrom(
-                          //     backgroundColor:
-                          //         Colors.white, // White background
-                          //     foregroundColor: Colors.black, // Black text
-                          //     side: const BorderSide(
-                          //         color: Colors.black), // Black border
-                          //     shape: RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.circular(10),
-                          //     ),
-                          //     padding: const EdgeInsets.symmetric(
-                          //         vertical: 16.0),
-                          //   ),
-                          // ),
-                          const SizedBox(height: 10),
-                          const Center(
-                            child: Text(
-                              'or Sign in with Email',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.grey),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -201,23 +164,28 @@ class _LoginState extends State<Login> {
                           ),
                           const SizedBox(height: 10),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Row(
-                                children: [
-                                  Checkbox(
-                                    value: _rememberMe,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _rememberMe = value!;
-                                      });
-                                    },
-                                  ),
-                                  const Text('Remember me'),
-                                ],
-                              ),
+                              // Row(
+                              //   children: [
+                              //     Checkbox(
+                              //       value: _rememberMe,
+                              //       onChanged: (value) {
+                              //         setState(() {
+                              //           _rememberMe = value!;
+                              //         });
+                              //       },
+                              //     ),
+                              //     const Text('Remember me'),
+                              //   ],
+                              // ),
                               TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  context
+                                      .read<LoginPageProvider>()
+                                      .sendEmail(context);
+                                  // context.push("/confirmPaswordScreen");
+                                },
                                 child: const Text(
                                   'Forgot password?',
                                   style: TextStyle(color: Colors.blueAccent),
@@ -226,23 +194,43 @@ class _LoginState extends State<Login> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 16.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text(
-                              'Login',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
+                          context.watch<LoginPageProvider>().loading
+                              ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : ElevatedButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      context
+                                          .read<LoginPageProvider>()
+                                          .loginUSer(
+                                              _emailController.text,
+                                              _passwordController.text,
+                                              context);
+                                    }
 
+                                    // Navigator.pushAndRemoveUntil(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => const LandingScreen(),
+                                    //   ),
+                                    //   (route) => false,
+                                    // );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blueAccent,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16.0),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Login',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                          const SizedBox(height: 10),
                           const SizedBox(height: 30),
                           const Center(
                             child: Text(

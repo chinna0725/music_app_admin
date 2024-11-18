@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:music_app_admin/models/user_model.dart';
+import 'package:music_app_admin/utils/common_methods.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/users_page_provider.dart';
@@ -40,6 +42,8 @@ class _AddUserWidgetState extends State<AddUserWidget> {
         children: [
           IconButton(
             onPressed: () {
+              context.read<UsersPageProvider>().setSetectedModel(
+                  UserModel(id: "", name: "", mobileNumber: ""));
               context.read<UsersPageProvider>().setAddUserSelected = false;
             },
             icon: const Icon(Icons.arrow_back, color: AppPallate.darkBlue),
@@ -101,19 +105,54 @@ class _AddUserWidgetState extends State<AddUserWidget> {
                           backgroundColor:
                               WidgetStatePropertyAll(Colors.blue.shade500),
                         ),
-                        onPressed: () {},
-                        child: 
-                        context.read<UsersPageProvider>().isNew?
-                        const Text(
-                          "Add",
-                          style: TextStyle(
-                              fontSize: 14, color: AppPallate.whiteColor),
-                        ):
-                        const Text(
-                          "Save",
-                          style: TextStyle(
-                              fontSize: 14, color: AppPallate.whiteColor),
-                        ),
+                        onPressed: () {
+                          if (_nameController.text.isNotEmpty &&
+                              _phoneController.text.isNotEmpty) {
+                            if (context.read<UsersPageProvider>().isNew) {
+                              try {
+                                context.read<UsersPageProvider>().addUSer(
+                                    _nameController.text.toString().trim(),
+                                    _phoneController.text.toString().trim(),
+                                    context);
+                              } catch (e) {
+                                CommonMethods.showErrorAlertDialog(
+                                    context, e.toString());
+                              }
+                            } else {
+                              if (_nameController.text.isNotEmpty &&
+                                  _phoneController.text.isNotEmpty) {
+                                UserModel model = UserModel(
+                                  id: context
+                                      .read<UsersPageProvider>()
+                                      .selectedModel
+                                      .id,
+                                  name: _nameController.text,
+                                  mobileNumber: _phoneController.text,
+                                );
+
+                                context
+                                    .read<UsersPageProvider>()
+                                    .updateUser(model, context);
+                              }
+
+                              print("--save pressed----");
+                            }
+                          } else {
+                            CommonMethods.showErrorAlertDialog(
+                                context, "Enter all fields!");
+                          }
+                        },
+                        child: context.read<UsersPageProvider>().isNew
+                            ? const Text(
+                                "Add",
+                                style: TextStyle(
+                                    fontSize: 14, color: AppPallate.whiteColor),
+                              )
+                            : const Text(
+                                "Save",
+                                style: TextStyle(
+                                    fontSize: 14, color: AppPallate.whiteColor),
+                              ),
                       ),
                       const SizedBox(
                         width: 10,
@@ -130,10 +169,7 @@ class _AddUserWidgetState extends State<AddUserWidget> {
                               WidgetStatePropertyAll(Colors.black38),
                         ),
                         onPressed: () {},
-                        child: const
-                        
-                        
-                         Text(
+                        child: const Text(
                           "Reset",
                           style: TextStyle(
                               fontSize: 14, color: AppPallate.whiteColor),

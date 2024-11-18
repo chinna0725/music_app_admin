@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CommonMethods {
   static showAlertDialog(BuildContext context, VoidCallback ftn) {
     // set up the buttons
-    Widget cancelButton = TextButton(
-      child: const Text("Cancel"),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    );
+      Widget cancelButton = TextButton(
+        child: const Text("Cancel"),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      );
     Widget continueButton = TextButton(
       onPressed: ftn,
       child: const Text("Delete"),
@@ -58,5 +59,13 @@ class CommonMethods {
         return alert;
       },
     );
+  }
+
+
+
+ static Future<void> saveUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool r = await prefs.setBool('isLoggedIn', true);
+    print("-log-----$r----");
   }
 }

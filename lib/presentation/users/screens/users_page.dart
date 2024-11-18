@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:music_app_admin/models/user_model.dart';
 import 'package:music_app_admin/presentation/users/widgets/add_user_widget.dart';
 import 'package:music_app_admin/provider/users_page_provider.dart';
+import 'package:music_app_admin/utils/animation_loader.dart';
 import 'package:music_app_admin/utils/app_pallate.dart';
 import 'package:music_app_admin/utils/common_methods.dart';
 import 'package:music_app_admin/utils/decoration_utils.dart';
@@ -21,7 +23,6 @@ class _UsersPageState extends State<UsersPage> {
   @override
   void initState() {
     context.read<UsersPageProvider>().getUsersLIst();
-    //context.read<UsersPageProvider>().addUserSelected = false;
     super.initState();
   }
 
@@ -67,38 +68,10 @@ class _UsersPageState extends State<UsersPage> {
                     )
                   ],
                 ),
-
-                // GridView.count(
-                //   physics: const NeverScrollableScrollPhysics(),
-                //   shrinkWrap: true,
-                //   crossAxisCount: ScreenUtils.isMobileView(context)
-                //       ? 1
-                //       : ScreenUtils.isTabletView(context)
-                //           ? 2
-                //           : 2,
-                //   crossAxisSpacing: size.width * 0.020,
-                //   mainAxisSpacing: size.width * 0.020,
-                //   childAspectRatio: ScreenUtils.isMobileView(context)
-                //       ? 3.1
-                //       : ScreenUtils.isTabletView(context)
-                //           ? 2.5
-                //           : 3.5,
-                //   children: [
-                //     Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: getGridWidget("Playlists", Icons.album_outlined, 25,
-                //             const Color.fromARGB(255, 65, 55, 211), context)),
-                //     Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: getGridWidget("Songs", Icons.album_outlined, 25,
-                //             const Color.fromARGB(255, 65, 55, 211), context)),
-                //   ],
-                // ),
-
                 const SizedBox(
                   height: 20,
                 ),
-
+// search bar container------------------------------------------
                 Container(
                   height: 50,
                   width: ScreenUtils.isMobileView(context) ||
@@ -131,7 +104,7 @@ class _UsersPageState extends State<UsersPage> {
                   height: 20,
                 ),
 
-                //  userlist container
+                //  userlist container----------------------------------------------
                 Container(
                   width: size.width,
                   padding: const EdgeInsets.all(15),
@@ -155,21 +128,23 @@ class _UsersPageState extends State<UsersPage> {
                       ),
                       Consumer<UsersPageProvider>(
                         builder: (context, provider, child) {
-                          return provider.selectedList.isEmpty
-                              ? SizedBox(
-                                  height: 100,
-                                  width: size.width,
-                                  child: const Center(
-                                    child: Text(
-                                      "No Users",
-                                      style: TextStyle(color: Colors.black45),
-                                    ),
-                                  ),
+                          return provider.getMainLoading
+                              ? const Center(
+                                  child: CircularProgressIndicator(),
                                 )
-                              : ScreenUtils.isMobileView(context)
-                                  ? FittedBox(
-                                      child: getDatatableWidget(provider, size))
-                                  : getDatatableWidget(provider, size);
+                              : provider.selectedList.isEmpty
+                                  ? const CustomAnimationLoaderWidget(
+                                      text: "No Users",
+                                      animation: "assets/53207-empty-file.json",
+                                    )
+                                  : ScreenUtils.isMobileView(context)
+                                      ? FittedBox(
+                                          child: getDatatableWidget(
+                                              provider, size))
+                                      : getDatatableWidget(
+                                          provider,
+                                          size,
+                                        );
                         },
                       )
                     ],
@@ -370,9 +345,11 @@ class _UsersPageState extends State<UsersPage> {
             IconButton(
                 color: Colors.red,
                 onPressed: () {
-                  CommonMethods.
-                  showAlertDialog(context, (){
-                    print("object");
+                  CommonMethods.showAlertDialog(context, () {
+                    context
+                        .read<UsersPageProvider>()
+                        .deleteUser(model.id, context);
+                    context.pop();
                   });
                 },
                 icon: const Icon(Icons.delete)),
@@ -382,7 +359,6 @@ class _UsersPageState extends State<UsersPage> {
     ]);
   }
 
- 
   Widget getGridWidget(String title, IconData icon, int count, Color color,
       BuildContext context) {
     return Container(
